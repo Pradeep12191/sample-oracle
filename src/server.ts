@@ -2,7 +2,7 @@ import 'tsconfig-paths/register';
 import app from './app';
 
 import http from 'http';
-import oracledb from 'oracledb';
+import { pool } from './util/database';
 import debug from 'debug';
 import { socket } from '@helpers';
 const debugNode = debug("node-angular");
@@ -55,22 +55,25 @@ const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 
-oracledb.getConnection({
-  user: "HR",
-  password: "oracle",
-  connectString: "localhost:1521/xepdb1"
-}).then(async () => {
-  server.listen(port);
-  console.log('connected to database');
-  const io = socket.init(server);
+(async function () {
+  try {
+    await pool.sync()
+    server.listen(port);
+    console.log('connected to database');
+    const io = socket.init(server);
 
-  io.on('connection', (socket) => {
-    console.log('live connection established');
-    socket.on('disconnect', () => {
-      console.log('live connection destroyed');
-    })
-  });
-  console.log('server listening to ' + port);
-}).catch(err => {
-  console.log(err);
-});
+    io.on('connection', (socket) => {
+      console.log('live connection established');
+      socket.on('disconnect', () => {
+        console.log('live connection destroyed');
+      })
+    });
+    console.log('server listening to ' + port);
+
+  } catch (error) {
+    console.log(error)
+  } finally {
+    
+  }
+})()
+

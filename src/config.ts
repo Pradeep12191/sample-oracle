@@ -2,12 +2,16 @@ import { env } from './env';
 
 const config_all = {
     prod: {
-        reportUrl: 'http://192.168.43.43:4200/#/',
-        port: 3000
+        connectString: 'pradeep@//localhost:1521/xepdb1',
+        password: 'dominate007',
+        database: 'xepdb1',
+        user: "pradeep",
     },
     dev: {
-        reportUrl: 'http://localhost:4200/#/',
-        port: 3000
+        connectString: 'localhost:1521/xepdb1',
+        database: 'xe',
+        password: 'password',
+        user: "C##pradeep",
     }
 }
 
